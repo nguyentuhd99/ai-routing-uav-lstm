@@ -1,0 +1,28 @@
+hello
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense
+import numpy as np
+
+# Tạo mô hình LSTM
+def create_lstm_model(input_shape):
+    model = Sequential([
+        LSTM(64, input_shape=input_shape, return_sequences=True),
+        LSTM(32),
+        Dense(3, activation="linear")  # 3 đầu ra: x, y, z (vị trí UAV)
+    ])
+    model.compile(optimizer="adam", loss="mse")
+    return model
+
+# Huấn luyện mô hình
+def train_lstm():
+    # Dữ liệu giả lập: 100 mẫu, 10 bước thời gian, 3 thông số
+    x_train = np.random.rand(100, 10, 3)  # Mỗi bước chứa (x, y, z)
+    y_train = np.random.rand(100, 3)      # Kết quả dự đoán (x', y', z')
+    model = create_lstm_model((10, 3))
+    model.fit(x_train, y_train, epochs=10, batch_size=16)
+    model.save("lstm_model.h5")
+    print("Model saved!")
+
+if __name__ == "__main__":
+    train_lstm()
